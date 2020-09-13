@@ -28,6 +28,9 @@ defmodule GraphicsAPI.MixProject do
       {:jason, "~> 1.2"},
       {:plug, "~> 1.6"},
       {:plug_cowboy, "~> 2.0"},
+      {:ecto, "~> 3.4"},
+      {:ecto_sql, "~> 3.4"},
+      {:postgrex, "~> 0.15"},
       {:exsync, "~> 0.2", only: :dev}
     ]
   end

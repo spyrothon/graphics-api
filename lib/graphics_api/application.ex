@@ -7,7 +7,8 @@ defmodule GraphicsAPI.Application do
 
   def start(_type, _args) do
     children = [
-      GraphicsAPI.Endpoint
+      {GraphicsAPI.Repo, []},
+      GraphicsAPIWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -1,13 +1,14 @@
-defmodule GraphicsAPI.Endpoint do
+defmodule GraphicsAPIWeb.Endpoint do
   require Logger
 
   use Plug.Router
+  use Plug.ErrorHandler
 
   if Mix.env() == :dev do
     use Plug.Debugger, otp_app: :graphics_api
   end
 
-  use Plug.ErrorHandler
+  plug(Plug.Logger)
 
   plug(:match)
 
@@ -19,7 +20,7 @@ defmodule GraphicsAPI.Endpoint do
 
   plug(:dispatch)
 
-  forward("/", to: GraphicsAPI.Router)
+  forward("/", to: GraphicsAPIWeb.Router)
 
   # App Spec
 
