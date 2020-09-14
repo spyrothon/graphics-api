@@ -5,3 +5,6 @@ config :graphics_api, GraphicsAPI.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost"
+
+config :cors_plug,
+  origin: ["*"]

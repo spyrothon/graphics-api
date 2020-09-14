@@ -2,11 +2,12 @@ defmodule GraphicsAPIWeb.Endpoint do
   require Logger
 
   use Plug.Router
-  use Plug.ErrorHandler
 
   if Mix.env() == :dev do
     use Plug.Debugger, otp_app: :graphics_api
   end
+
+  use Plug.ErrorHandler
 
   plug(Plug.Logger)
 
@@ -18,6 +19,7 @@ defmodule GraphicsAPIWeb.Endpoint do
     json_decoder: Jason
   )
 
+  plug(CORSPlug)
   plug(:dispatch)
 
   forward("/", to: GraphicsAPIWeb.Router)

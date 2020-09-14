@@ -13,6 +13,20 @@ defmodule GraphicsAPIWeb.APIController do
   end
 
   def json(conn, data) do
-    send_resp(conn, conn.status || 200, Jason.encode!(data))
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(conn.status || 200, Jason.encode!(data))
+  end
+
+  def changeset_error(conn, changeset = %Ecto.Changeset{}) do
+    conn
+    |> put_status(422)
+    |> json(%{errors: Ecto.Changeset.traverse_errors(changeset, &simplify_ecto_error/1)})
+  end
+
+  defp simplify_ecto_error({msg, opts}) do
+    Enum.reduce(opts, msg, fn {key, value}, acc ->
+      String.replace(acc, "%{#{key}}", to_string(value))
+    end)
   end
 end
