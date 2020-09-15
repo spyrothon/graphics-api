@@ -4,6 +4,7 @@ defmodule GraphicsAPIWeb.Router do
   plug(:match)
   plug(:dispatch)
 
+  forward("/api/v1/users", to: GraphicsAPIWeb.UsersController)
   forward("/api/v1/runs", to: GraphicsAPIWeb.RunsController)
 
   match(_, do: send_resp(conn, 404, ""))

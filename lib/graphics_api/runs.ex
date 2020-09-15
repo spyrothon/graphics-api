@@ -23,4 +23,9 @@ defmodule GraphicsAPI.Runs do
     |> Run.changeset(params)
     |> Repo.update()
   end
+
+  def delete_run(run = %Run{}) do
+    run
+    |> Repo.delete()
+  end
 end

@@ -19,6 +19,11 @@ defmodule GraphicsAPI.Runs.Run do
 
   @fields [:id, :inserted_at, :updated_at] ++ @required_fields ++ @optional_fields
 
+  @embeds [
+    :runners,
+    :commentators
+  ]
+
   schema "runs_runs" do
     field(:game_name, :string)
     field(:game_name_formatted, :string)
@@ -31,6 +36,9 @@ defmodule GraphicsAPI.Runs.Run do
     field(:actual_seconds, :integer)
     field(:finished, :boolean)
 
+    embeds_many(:runners, GraphicsAPI.Runs.Participant, on_replace: :delete)
+    embeds_many(:commentators, GraphicsAPI.Runs.Participant, on_replace: :delete)
+
     timestamps()
   end
 
@@ -38,9 +46,16 @@ defmodule GraphicsAPI.Runs.Run do
     run
     |> cast(params, @fields)
     |> validate_required(@required_fields)
+    |> cast_participants()
   end
 
-  def fields, do: @fields
+  defp cast_participants(changeset) do
+    changeset
+    |> cast_embed(:runners)
+    |> cast_embed(:commentators)
+  end
+
+  def fields, do: @fields ++ @embeds
 end
 
 defimpl Jason.Encoder, for: [GraphicsAPI.Runs.Run] do

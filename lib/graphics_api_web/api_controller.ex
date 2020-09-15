@@ -24,6 +24,16 @@ defmodule GraphicsAPIWeb.APIController do
     |> json(%{errors: Ecto.Changeset.traverse_errors(changeset, &simplify_ecto_error/1)})
   end
 
+  def no_content(conn) do
+    conn
+    |> send_resp(204, "")
+  end
+
+  def not_found(conn) do
+    conn
+    |> send_resp(404, "")
+  end
+
   defp simplify_ecto_error({msg, opts}) do
     Enum.reduce(opts, msg, fn {key, value}, acc ->
       String.replace(acc, "%{#{key}}", to_string(value))

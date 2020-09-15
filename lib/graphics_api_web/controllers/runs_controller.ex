@@ -38,7 +38,23 @@ defmodule GraphicsAPIWeb.RunsController do
       json(conn, Runs.get_run(created_id))
     else
       run when is_nil(run) ->
-        conn |> send_resp(404, "")
+        conn |> not_found()
+
+      {:error, changeset} ->
+        conn
+        |> changeset_error(changeset)
+    end
+  end
+
+  delete "/:id" do
+    run_id = conn.path_params["id"]
+
+    with run = %Runs.Run{} <- Runs.get_run(run_id),
+         {:ok, _changeset} <- Runs.delete_run(run) do
+      no_content(conn)
+    else
+      nil ->
+        conn |> not_found()
 
       {:error, changeset} ->
         conn
