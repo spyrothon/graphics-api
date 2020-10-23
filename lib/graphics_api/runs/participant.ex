@@ -30,7 +30,19 @@ defmodule GraphicsAPI.Runs.Participant do
   end
 
   def fields, do: @fields
+end
 
-  require Protocol
-  Protocol.derive(Jason.Encoder, GraphicsAPI.Runs.Participant, only: @fields)
+defimpl Jason.Encoder, for: [GraphicsAPI.Runs.Participant] do
+  def encode(%{__struct__: _} = struct, options) do
+    struct
+    |> Map.from_struct()
+    |> Map.take(GraphicsAPI.Runs.Participant.fields())
+    |> stringify_id()
+    |> Jason.Encode.map(options)
+  end
+
+  defp stringify_id(data) do
+    data
+    |> Map.put(:user_id, Integer.to_string(data.user_id))
+  end
 end

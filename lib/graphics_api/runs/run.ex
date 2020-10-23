@@ -63,8 +63,14 @@ defimpl Jason.Encoder, for: [GraphicsAPI.Runs.Run] do
     struct
     |> Map.from_struct()
     |> Map.take(GraphicsAPI.Runs.Run.fields())
+    |> stringify_id()
     |> set_formatted_names()
     |> Jason.Encode.map(options)
+  end
+
+  defp stringify_id(data) do
+    data
+    |> Map.put(:id, Integer.to_string(data.id))
   end
 
   defp set_formatted_names(data) do
