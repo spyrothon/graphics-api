@@ -21,7 +21,8 @@ defmodule GraphicsAPI.Runs.Run do
 
   @embeds [
     :runners,
-    :commentators
+    :commentators,
+    :schedule_entry
   ]
 
   schema "runs_runs" do
