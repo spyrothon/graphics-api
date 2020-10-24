@@ -96,6 +96,20 @@ defmodule GraphicsAPI.Runs do
     |> Repo.update()
   end
 
+  def add_schedule_entry(schedule = %Schedule{}, entry_params) do
+    entries = schedule.schedule_entries
+    %{position: last_position} = List.last(entries)
+
+    updated_entry =
+      entry_params
+      |> Map.put("position", Map.get(entry_params, :position, last_position + 1))
+      |> Map.put("schedule_id", schedule.id)
+
+    %ScheduleEntry{}
+    |> ScheduleEntry.changeset(updated_entry)
+    |> Repo.insert()
+  end
+
   def delete_schedule(schedule = %Schedule{}) do
     schedule
     |> Repo.delete()

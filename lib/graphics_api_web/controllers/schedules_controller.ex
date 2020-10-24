@@ -61,4 +61,21 @@ defmodule GraphicsAPIWeb.SchedulesController do
         |> changeset_error(changeset)
     end
   end
+
+  post "/:id/add-entry" do
+    schedule_id = conn.path_params["id"]
+    entry_params = conn.body_params
+
+    with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
+         {:ok, changeset} <- Runs.add_schedule_entry(schedule, entry_params) do
+      json(conn, Runs.get_schedule(schedule_id))
+    else
+      schedule when is_nil(schedule) ->
+        conn |> not_found()
+
+      {:error, changeset} ->
+        conn
+        |> changeset_error(changeset)
+    end
+  end
 end

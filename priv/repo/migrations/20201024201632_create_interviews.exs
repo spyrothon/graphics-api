@@ -5,6 +5,7 @@ defmodule GraphicsAPI.Repo.Migrations.CreateInterviews do
     create table(:runs_interviews) do
       add(:topic, :string)
       add(:notes, :string)
+      add(:estimate_seconds, :integer)
       add(:interviewees, :jsonb, default: "[]")
       add(:interviewers, :jsonb, default: "[]")
     end

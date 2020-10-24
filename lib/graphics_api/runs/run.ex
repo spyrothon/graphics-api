@@ -2,11 +2,8 @@ defmodule GraphicsAPI.Runs.Run do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @required_fields [
-    :game_name
-  ]
-
   @optional_fields [
+    :game_name,
     :game_name_formatted,
     :category_name,
     :estimate_seconds,
@@ -17,7 +14,7 @@ defmodule GraphicsAPI.Runs.Run do
     :finished
   ]
 
-  @fields [:id, :inserted_at, :updated_at] ++ @required_fields ++ @optional_fields
+  @fields [:id, :inserted_at, :updated_at] ++ @optional_fields
 
   @embeds [
     :runners,
@@ -46,7 +43,6 @@ defmodule GraphicsAPI.Runs.Run do
   def changeset(run, params \\ %{}) do
     run
     |> cast(params, @fields)
-    |> validate_required(@required_fields)
     |> cast_participants()
   end
 
