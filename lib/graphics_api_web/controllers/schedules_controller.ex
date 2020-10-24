@@ -78,4 +78,21 @@ defmodule GraphicsAPIWeb.SchedulesController do
         |> changeset_error(changeset)
     end
   end
+
+  delete "/:schedule_id/entries/:entry_id" do
+    schedule_id = conn.path_params["schedule_id"]
+    entry_id = conn.path_params["entry_id"]
+
+    with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
+         {:ok, _changeset} <- Runs.remove_schedule_entry(schedule, entry_id) do
+      no_content(conn)
+    else
+      nil ->
+        conn |> not_found()
+
+      {:error, changeset} ->
+        conn
+        |> changeset_error(changeset)
+    end
+  end
 end
