@@ -7,7 +7,8 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
     :schedule_id,
     :setup_seconds,
     :position,
-    :run_id
+    :run_id,
+    :interview_id
   ]
 
   schema "runs_schedule_entries" do
@@ -16,6 +17,7 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
 
     field(:position, :integer)
     belongs_to(:run, GraphicsAPI.Runs.Run)
+    belongs_to(:interview, GraphicsAPI.Runs.Interview)
   end
 
   def changeset(participant, params \\ %{}) do

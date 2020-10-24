@@ -9,6 +9,10 @@ defmodule GraphicsAPI.Runs.Schedule do
   schema "runs_schedules" do
     has_many(:schedule_entries, GraphicsAPI.Runs.ScheduleEntry)
     many_to_many(:runs, GraphicsAPI.Runs.Run, join_through: GraphicsAPI.Runs.ScheduleEntry)
+
+    many_to_many(:interviews, GraphicsAPI.Runs.Interview,
+      join_through: GraphicsAPI.Runs.ScheduleEntry
+    )
   end
 
   def changeset(participant, params \\ %{}) do
@@ -17,7 +21,7 @@ defmodule GraphicsAPI.Runs.Schedule do
     |> cast_assoc(:schedule_entries)
   end
 
-  def fields, do: @fields ++ [:schedule_entries, :runs]
+  def fields, do: @fields ++ [:schedule_entries, :runs, :interviews]
 end
 
 defimpl Jason.Encoder, for: [GraphicsAPI.Runs.Schedule] do

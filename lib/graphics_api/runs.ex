@@ -2,7 +2,7 @@ defmodule GraphicsAPI.Runs do
   import Ecto.Query, warn: false
   alias GraphicsAPI.Repo
 
-  alias GraphicsAPI.Runs.{Schedule, ScheduleEntry, Run}
+  alias GraphicsAPI.Runs.{Interview, Schedule, ScheduleEntry, Run}
 
   ###
   # Runs
@@ -34,12 +34,42 @@ defmodule GraphicsAPI.Runs do
   end
 
   ###
+  # Interviews
+  ###
+
+  def list_interviews() do
+    Repo.all(Interview)
+  end
+
+  def get_interview(interview_id) do
+    Repo.get(Interview, interview_id)
+  end
+
+  def create_interview(params) do
+    %Interview{}
+    |> Interview.changeset(params)
+    |> Repo.insert()
+  end
+
+  def update_interview(interview = %Interview{}, params) do
+    interview
+    |> Interview.changeset(params)
+    |> Repo.update()
+  end
+
+  def delete_interview(interview = %Interview{}) do
+    interview
+    |> Repo.delete()
+  end
+
+  ###
   # Schedules
   ###
 
   @schedules_query from(s in Schedule,
                      preload: [
                        :runs,
+                       :interviews,
                        schedule_entries: ^from(e in ScheduleEntry, order_by: [asc: e.position])
                      ]
                    )
