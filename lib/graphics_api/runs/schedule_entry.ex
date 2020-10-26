@@ -20,9 +20,14 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
     belongs_to(:interview, GraphicsAPI.Runs.Interview)
   end
 
-  def changeset(participant, params \\ %{}) do
-    participant
+  def changeset(entry, params \\ %{}) do
+    entry
     |> cast(params, @fields)
+  end
+
+  def update_changeset(entry, params \\ %{}) do
+    entry
+    |> cast(params, [:schedule_id, :setup_seconds, :run_id, :interview_id])
   end
 
   def fields, do: @fields

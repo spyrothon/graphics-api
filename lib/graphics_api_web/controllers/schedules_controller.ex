@@ -62,7 +62,7 @@ defmodule GraphicsAPIWeb.SchedulesController do
     end
   end
 
-  post "/:id/add-entry" do
+  post "/:id/entries" do
     schedule_id = conn.path_params["id"]
     entry_params = conn.body_params
 
@@ -86,6 +86,23 @@ defmodule GraphicsAPIWeb.SchedulesController do
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
          {:ok, _changeset} <- Runs.remove_schedule_entry(schedule, entry_id) do
       no_content(conn)
+    else
+      nil ->
+        conn |> not_found()
+
+      {:error, changeset} ->
+        conn
+        |> changeset_error(changeset)
+    end
+  end
+
+  put "/:schedule_id/entries/:entry_id" do
+    entry_id = conn.path_params["entry_id"]
+    entry_params = conn.body_params
+
+    with entry = %Runs.ScheduleEntry{} <- Runs.get_schedule_entry(entry_id),
+         {:ok, _changeset} <- Runs.update_schedule_entry(entry, entry_params) do
+      json(conn, Runs.get_schedule_entry(entry_id))
     else
       nil ->
         conn |> not_found()

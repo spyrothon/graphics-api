@@ -96,6 +96,21 @@ defmodule GraphicsAPI.Runs do
     |> Repo.update()
   end
 
+  def delete_schedule(schedule = %Schedule{}) do
+    schedule
+    |> Repo.delete()
+  end
+
+  def get_schedule_entry(entry_id) do
+    Repo.get(ScheduleEntry, entry_id)
+  end
+
+  def update_schedule_entry(entry = %ScheduleEntry{}, entry_params) do
+    entry
+    |> ScheduleEntry.update_changeset(entry_params)
+    |> Repo.update()
+  end
+
   def add_schedule_entry(schedule = %Schedule{}, entry_params) do
     entries = schedule.schedule_entries
     %{position: last_position} = List.last(entries)
@@ -113,11 +128,6 @@ defmodule GraphicsAPI.Runs do
   def remove_schedule_entry(schedule = %Schedule{}, entry_id) do
     ScheduleEntry
     |> Repo.get!(entry_id)
-    |> Repo.delete()
-  end
-
-  def delete_schedule(schedule = %Schedule{}) do
-    schedule
     |> Repo.delete()
   end
 end
