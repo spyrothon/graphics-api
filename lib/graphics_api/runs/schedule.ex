@@ -3,7 +3,8 @@ defmodule GraphicsAPI.Runs.Schedule do
   import Ecto.Changeset
 
   @fields [
-    :id
+    :id,
+    :current_entry_id
   ]
 
   schema "runs_schedules" do
@@ -13,6 +14,8 @@ defmodule GraphicsAPI.Runs.Schedule do
     many_to_many(:interviews, GraphicsAPI.Runs.Interview,
       join_through: GraphicsAPI.Runs.ScheduleEntry
     )
+
+    field(:current_entry_id, :integer)
   end
 
   def changeset(participant, params \\ %{}) do
@@ -36,5 +39,6 @@ defimpl Jason.Encoder, for: [GraphicsAPI.Runs.Schedule] do
   def stringify_ids(data) do
     data
     |> Map.put(:id, Integer.to_string(data.id))
+    |> Map.put(:current_entry_id, Integer.to_string(data.current_entry_id))
   end
 end
