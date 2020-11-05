@@ -20,7 +20,9 @@ defmodule GraphicsAPIWeb.SchedulesController do
 
     with {:ok, changeset} <- Runs.create_schedule(schedule_params),
          %{id: created_id} <- changeset do
-      json(conn, Runs.get_schedule(created_id))
+      schedule = Runs.get_schedule(created_id)
+      GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
+      json(conn, schedule)
     else
       {:error, changeset} ->
         conn
@@ -35,7 +37,9 @@ defmodule GraphicsAPIWeb.SchedulesController do
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
          {:ok, changeset} <- Runs.update_schedule(schedule, schedule_params),
          %{id: created_id} <- changeset do
-      json(conn, Runs.get_schedule(created_id))
+      schedule = Runs.get_schedule(created_id)
+      GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
+      json(conn, schedule)
     else
       schedule when is_nil(schedule) ->
         conn |> not_found()

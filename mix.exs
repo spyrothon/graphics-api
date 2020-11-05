@@ -32,7 +32,8 @@ defmodule GraphicsAPI.MixProject do
       {:ecto, "~> 3.4"},
       {:ecto_sql, "~> 3.4"},
       {:postgrex, "~> 0.15"},
-      {:exsync, "~> 0.2", only: :dev}
+      {:exsync, "~> 0.2", only: :dev},
+      {:riverside, "~> 1.2.6"}
     ]
   end
 end

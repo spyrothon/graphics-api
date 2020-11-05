@@ -8,6 +8,7 @@ defmodule GraphicsAPI.Application do
   def start(_type, _args) do
     children = [
       {GraphicsAPI.Repo, []},
+      {Riverside, [handler: GraphicsAPIWeb.SyncSocketHandler]},
       GraphicsAPIWeb.Endpoint
     ]
 
