@@ -36,8 +36,8 @@ defmodule GraphicsAPIWeb.SchedulesController do
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
          {:ok, changeset} <- Runs.update_schedule(schedule, schedule_params),
-         %{id: created_id} <- changeset do
-      schedule = Runs.get_schedule(created_id)
+         %{id: updated_id} <- changeset do
+      schedule = Runs.get_schedule(updated_id)
       GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
       json(conn, schedule)
     else
@@ -72,7 +72,9 @@ defmodule GraphicsAPIWeb.SchedulesController do
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
          {:ok, changeset} <- Runs.add_schedule_entry(schedule, entry_params) do
-      json(conn, Runs.get_schedule(schedule_id))
+      schedule = Runs.get_schedule(schedule_id)
+      GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
+      json(conn, schedule)
     else
       schedule when is_nil(schedule) ->
         conn |> not_found()
@@ -89,6 +91,8 @@ defmodule GraphicsAPIWeb.SchedulesController do
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
          {:ok, _changeset} <- Runs.remove_schedule_entry(schedule, entry_id) do
+      schedule = Runs.get_schedule(schedule_id)
+      GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
       no_content(conn)
     else
       nil ->
@@ -101,11 +105,14 @@ defmodule GraphicsAPIWeb.SchedulesController do
   end
 
   put "/:schedule_id/entries/:entry_id" do
+    schedule_id = conn.path_params["schedule_id"]
     entry_id = conn.path_params["entry_id"]
     entry_params = conn.body_params
 
     with entry = %Runs.ScheduleEntry{} <- Runs.get_schedule_entry(entry_id),
          {:ok, _changeset} <- Runs.update_schedule_entry(entry, entry_params) do
+      schedule = Runs.get_schedule(schedule_id)
+      GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
       json(conn, Runs.get_schedule_entry(entry_id))
     else
       nil ->

@@ -20,6 +20,14 @@ defmodule GraphicsAPIWeb.SyncSocketHandler do
     _sync(%{type: "load_schedule", schedule: schedule})
   end
 
+  def update_run(run) do
+    _sync(%{type: "load_run", run: run})
+  end
+
+  def update_interview(interview) do
+    _sync(%{type: "load_interview", interview: interview})
+  end
+
   defp _sync(data) do
     deliver_channel("sync_updates", data)
   end

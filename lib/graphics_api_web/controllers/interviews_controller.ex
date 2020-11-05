@@ -20,7 +20,9 @@ defmodule GraphicsAPIWeb.InterviewsController do
 
     with {:ok, changeset} <- Runs.create_interview(interview_params),
          %{id: created_id} <- changeset do
-      json(conn, Runs.get_interview(created_id))
+      interview = Runs.get_interview(created_id)
+      GraphicsAPIWeb.SyncSocketHandler.update_interview(interview)
+      json(conn, interview)
     else
       {:error, changeset} ->
         conn
@@ -35,7 +37,9 @@ defmodule GraphicsAPIWeb.InterviewsController do
     with interview = %Runs.Interview{} <- Runs.get_interview(interview_id),
          {:ok, changeset} <- Runs.update_interview(interview, interview_params),
          %{id: created_id} <- changeset do
-      json(conn, Runs.get_interview(created_id))
+      interview = Runs.get_interview(created_id)
+      GraphicsAPIWeb.SyncSocketHandler.update_interview(interview)
+      json(conn, interview)
     else
       interview when is_nil(interview) ->
         conn |> not_found()
