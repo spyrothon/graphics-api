@@ -7,6 +7,7 @@ defmodule GraphicsAPI.Runs.Participant do
     :twitch_name,
     :twitter_name,
     :actual_seconds,
+    :has_webcam,
     :visible
   ]
 
@@ -17,6 +18,7 @@ defmodule GraphicsAPI.Runs.Participant do
 
     field(:actual_seconds, :integer)
 
+    field(:has_webcam, :boolean, default: false)
     field(:visible, :boolean, default: true)
   end
 
