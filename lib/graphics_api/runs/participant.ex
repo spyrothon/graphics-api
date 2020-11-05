@@ -5,13 +5,19 @@ defmodule GraphicsAPI.Runs.Participant do
   @fields [
     :display_name,
     :twitch_name,
-    :twitter_name
+    :twitter_name,
+    :actual_seconds,
+    :visible
   ]
 
   embedded_schema do
     field(:display_name, :string)
     field(:twitch_name, :string)
     field(:twitter_name, :string)
+
+    field(:actual_seconds, :integer)
+
+    field(:visible, :boolean, default: true)
   end
 
   def changeset(participant, params \\ %{}) do
