@@ -4,7 +4,8 @@ defmodule GraphicsAPI.Runs.Schedule do
 
   @fields [
     :id,
-    :current_entry_id
+    :current_entry_id,
+    :debug
   ]
 
   schema "runs_schedules" do
@@ -16,6 +17,7 @@ defmodule GraphicsAPI.Runs.Schedule do
     )
 
     field(:current_entry_id, :integer)
+    field(:debug, :boolean, default: true)
   end
 
   def changeset(participant, params \\ %{}) do
