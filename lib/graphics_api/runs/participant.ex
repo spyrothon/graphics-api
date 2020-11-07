@@ -6,9 +6,14 @@ defmodule GraphicsAPI.Runs.Participant do
     :display_name,
     :twitch_name,
     :twitter_name,
-    :actual_seconds,
     :has_webcam,
-    :visible
+    :visible,
+
+    # Run Fields
+    :actual_seconds,
+
+    # Interview Fields
+    :score
   ]
 
   embedded_schema do
@@ -16,10 +21,14 @@ defmodule GraphicsAPI.Runs.Participant do
     field(:twitch_name, :string)
     field(:twitter_name, :string)
 
-    field(:actual_seconds, :integer)
-
     field(:has_webcam, :boolean, default: false)
     field(:visible, :boolean, default: true)
+
+    # Run Fields
+    field(:actual_seconds, :integer)
+
+    # Interview Fields
+    field(:score, :integer, default: 0)
   end
 
   def changeset(participant, params \\ %{}) do

@@ -2,11 +2,12 @@ defmodule GraphicsAPI.Runs.Interview do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @fields [:id, :topic, :notes, :estimate_seconds]
+  @fields [:id, :topic, :notes, :estimate_seconds, :current_question]
 
   @embeds [
     :interviewees,
-    :interviewers
+    :interviewers,
+    :questions
   ]
 
   schema "runs_interviews" do
@@ -16,6 +17,9 @@ defmodule GraphicsAPI.Runs.Interview do
 
     embeds_many(:interviewees, GraphicsAPI.Runs.Participant, on_replace: :delete)
     embeds_many(:interviewers, GraphicsAPI.Runs.Participant, on_replace: :delete)
+
+    embeds_many(:questions, GraphicsAPI.Runs.InterviewQuestion, on_replace: :delete)
+    field(:current_question, :string)
   end
 
   def changeset(interview, params \\ %{}) do
@@ -28,6 +32,7 @@ defmodule GraphicsAPI.Runs.Interview do
     changeset
     |> cast_embed(:interviewees)
     |> cast_embed(:interviewers)
+    |> cast_embed(:questions)
   end
 
   def fields, do: @fields ++ @embeds
