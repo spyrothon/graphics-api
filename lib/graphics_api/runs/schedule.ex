@@ -4,6 +4,9 @@ defmodule GraphicsAPI.Runs.Schedule do
 
   @fields [
     :id,
+    :run_title_template,
+    :interview_title_template,
+    :break_title_template,
     :current_entry_id,
     :debug
   ]
@@ -18,6 +21,9 @@ defmodule GraphicsAPI.Runs.Schedule do
 
     field(:current_entry_id, :integer)
     field(:debug, :boolean, default: true)
+    field(:run_title_template, :string)
+    field(:interview_title_template, :string)
+    field(:break_title_template, :string)
   end
 
   def changeset(participant, params \\ %{}) do

@@ -136,20 +136,46 @@ defmodule GraphicsAPI.Runs do
     |> Repo.delete()
   end
 
-  defp _update_twitch_channel_info(%Schedule{current_entry_id: current_entry_id}) do
-    new_run = get_schedule_entry(current_entry_id)
+  defp _update_twitch_channel_info(schedule = %Schedule{}) do
+    new_run = get_schedule_entry(schedule.current_entry_id)
 
-    case new_run.run_id do
-      nil ->
-        :ok
-
-      run_id ->
+    case new_run do
+      %{run_id: run_id} when not is_nil(run_id) ->
         run = get_run(run_id)
 
         Twitch.modify_channel_information(%{
           game_name: run.game_name,
-          title: "Spyrothon 7 is happening September 24th! | #{run.game_name}"
+          title: _format_run_title(schedule.run_title_template, run)
         })
+
+      %{interview_id: interview_id} when not is_nil(interview_id) ->
+        interview = get_interview(interview_id)
+
+        Twitch.modify_channel_information(%{
+          game_name: "Just Chatting",
+          title: _format_interview_title(schedule.interview_title_template, interview)
+        })
+
+      _ ->
+        :ok
     end
+  end
+
+  defp _format_run_title(template, run = %Run{}) do
+    runner_names = run.runners |> Enum.map_join(", ", & &1.display_name)
+
+    (template || "")
+    |> String.replace("{{gameName}}", run.game_name)
+    |> String.replace("{{categoryName}}", run.category_name)
+    |> String.replace("{{runners}}", runner_names)
+  end
+
+  defp _format_interview_title(template, interview = %Interview{}) do
+    interviewee_names = interview.interviewees |> Enum.map_join(", ", & &1.display_name)
+    interviewer_names = interview.interviewers |> Enum.map_join(", ", & &1.display_name)
+
+    (template || "")
+    |> String.replace("{{interviewees}}", interviewee_names)
+    |> String.replace("{{interviewers}}", interviewer_names)
   end
 end
