@@ -91,9 +91,14 @@ defmodule GraphicsAPI.Runs do
   end
 
   def update_schedule(schedule = %Schedule{}, params) do
-    schedule
-    |> Schedule.changeset(params)
-    |> Repo.update()
+    {:ok, schedule} =
+      schedule
+      |> Schedule.changeset(params)
+      |> Repo.update()
+
+    _update_twitch_channel_info(schedule)
+
+    {:ok, schedule}
   end
 
   def delete_schedule(schedule = %Schedule{}) do
@@ -129,5 +134,22 @@ defmodule GraphicsAPI.Runs do
     ScheduleEntry
     |> Repo.get!(entry_id)
     |> Repo.delete()
+  end
+
+  defp _update_twitch_channel_info(%Schedule{current_entry_id: current_entry_id}) do
+    new_run = get_schedule_entry(current_entry_id)
+
+    case new_run.run_id do
+      nil ->
+        :ok
+
+      run_id ->
+        run = get_run(run_id)
+
+        Twitch.modify_channel_information(%{
+          game_name: run.game_name,
+          title: "Spyrothon 7 is happening September 24th! | #{run.game_name}"
+        })
+    end
   end
 end
