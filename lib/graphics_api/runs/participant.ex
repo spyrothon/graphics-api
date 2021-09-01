@@ -10,6 +10,7 @@ defmodule GraphicsAPI.Runs.Participant do
     :visible,
 
     # Run Fields
+    :finished_at,
     :actual_seconds,
 
     # Interview Fields
@@ -26,6 +27,7 @@ defmodule GraphicsAPI.Runs.Participant do
 
     # Run Fields
     field(:actual_seconds, :integer)
+    field(:finished_at, :utc_datetime)
 
     # Interview Fields
     field(:score, :integer, default: 0)

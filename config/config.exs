@@ -1,7 +1,6 @@
 use Mix.Config
 
 config :graphics_api, GraphicsAPIWeb.Endpoint, port: 4000
-
 config :graphics_api, :ecto_repos, [GraphicsAPI.Repo]
 
 config :graphics_api, GraphicsAPIWeb.SyncSocketHandler,
@@ -17,5 +16,7 @@ config :graphics_api, GraphicsAPIWeb.SyncSocketHandler,
   # TCP SO_REUSEPORT flag
   reuse_port: false,
   show_debug_logs: false
+
+config :tesla, adapter: Tesla.Adapter.Hackney
 
 import_config "#{Mix.env()}.exs"

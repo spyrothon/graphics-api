@@ -11,7 +11,11 @@ defmodule GraphicsAPI.Runs.Run do
     :release_year,
     :notes,
     :actual_seconds,
-    :finished
+    :finished,
+    :started_at,
+    :finished_at,
+    :paused_at,
+    :pause_seconds
   ]
 
   @fields [:id, :inserted_at, :updated_at] ++ @optional_fields
@@ -33,6 +37,10 @@ defmodule GraphicsAPI.Runs.Run do
     field(:estimate_seconds, :integer)
     field(:actual_seconds, :integer)
     field(:finished, :boolean)
+    field(:started_at, :utc_datetime)
+    field(:finished_at, :utc_datetime)
+    field(:paused_at, :utc_datetime)
+    field(:pause_seconds, :integer)
 
     embeds_many(:runners, GraphicsAPI.Runs.Participant, on_replace: :delete)
     embeds_many(:commentators, GraphicsAPI.Runs.Participant, on_replace: :delete)

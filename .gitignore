@@ -22,7 +22,11 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 graphics_api-*.tar
 
-config/prod.exs
+config/*.exs
+config/*.json
+!config/config.exs
+!config/test.exs
+!config/*.example.*
 
 nohup.out
 *.log

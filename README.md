@@ -21,6 +21,15 @@ mix ecto.create
 mix ecto.migrate
 ```
 
+Then, ensure you have a local config, and update the values for your local install:
+
+```bash
+cp config/dev.example.exs config/dev.exs
+# Edit values for DB, Twitch access, etc.
+```
+
+Once you have at least a client_id specified in the configuration, you can use the access_token tool to get a user access token for a channel with `cd tools/access_token && yarn get` (assumes `dev` environment currently).
+
 Then, to run the server:
 
 ```bash
@@ -43,3 +52,7 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/graphics_api](https://hexdocs.pm/graphics_api).
+
+```
+
+```
