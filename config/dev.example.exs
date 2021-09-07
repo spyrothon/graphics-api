@@ -12,7 +12,6 @@ config :cors_plug,
 # UPDATE: Replace the access token with your channel's user access token from Twitch.
 # ALSO: Be sure to add the client_id to `dev.json`.
 config :graphics_api, :twitch,
-  access_token: "",
   broadcaster_id: 55555,
   client_id: "",
   client_secret: "",

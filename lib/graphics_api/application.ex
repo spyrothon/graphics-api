@@ -9,6 +9,7 @@ defmodule GraphicsAPI.Application do
     children = [
       {GraphicsAPI.Repo, []},
       {Riverside, [handler: GraphicsAPIWeb.SyncSocketHandler]},
+      {Twitch.TokenManager, [id: 1, persister: GraphicsAPI.Integrations.TwitchTokenPersister]},
       GraphicsAPIWeb.Endpoint
     ]
 

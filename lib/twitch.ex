@@ -1,7 +1,7 @@
 defmodule Twitch do
   use Tesla
+  alias Twitch.{Authentication, TokenManager}
 
-  @access_token Application.get_env(:graphics_api, Twitch)[:access_token]
   @broadcaster_id Application.get_env(:graphics_api, Twitch)[:broadcaster_id]
   @client_id Application.get_env(:graphics_api, Twitch)[:client_id]
 
@@ -9,7 +9,7 @@ defmodule Twitch do
     middleware = [
       {Tesla.Middleware.BaseUrl, "https://api.twitch.tv/helix"},
       Tesla.Middleware.JSON,
-      {Tesla.Middleware.BearerAuth, token: @access_token},
+      {Tesla.Middleware.BearerAuth, token: Authentication.get_valid_token()},
       {Tesla.Middleware.Headers, [{"Client-Id", @client_id}]}
     ]
 
@@ -65,7 +65,7 @@ defmodule Twitch do
     end
   end
 
-  @spec create_stream_marker(String.t()) :: :ok
-  def create_stream_marker(description) do
-  end
+  # @spec create_stream_marker(String.t()) :: :ok
+  # def create_stream_marker(description) do
+  # end
 end
