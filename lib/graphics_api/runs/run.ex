@@ -20,6 +20,15 @@ defmodule GraphicsAPI.Runs.Run do
 
   @fields [:id, :inserted_at, :updated_at] ++ @optional_fields
 
+  @timing_fields [
+    :actual_seconds,
+    :started_at,
+    :finished,
+    :finished_at,
+    :paused_at,
+    :pause_seconds
+  ]
+
   @embeds [
     :runners,
     :commentators,
@@ -52,6 +61,12 @@ defmodule GraphicsAPI.Runs.Run do
     run
     |> cast(params, @fields)
     |> cast_participants()
+  end
+
+  def timing_changeset(run, params \\ %{}) do
+    run
+    |> cast(params, @timing_fields)
+    |> cast_embed(:runners, with: &GraphicsAPI.Runs.Participant.timing_changeset/2)
   end
 
   defp cast_participants(changeset) do

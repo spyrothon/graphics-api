@@ -130,7 +130,7 @@ defmodule GraphicsAPI.Runs do
     |> Repo.insert()
   end
 
-  def remove_schedule_entry(schedule = %Schedule{}, entry_id) do
+  def remove_schedule_entry(%Schedule{}, entry_id) do
     ScheduleEntry
     |> Repo.get!(entry_id)
     |> Repo.delete()

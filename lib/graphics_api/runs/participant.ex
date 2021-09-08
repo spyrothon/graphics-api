@@ -3,6 +3,7 @@ defmodule GraphicsAPI.Runs.Participant do
   import Ecto.Changeset
 
   @fields [
+    :id,
     :display_name,
     :twitch_name,
     :twitter_name,
@@ -15,6 +16,11 @@ defmodule GraphicsAPI.Runs.Participant do
 
     # Interview Fields
     :score
+  ]
+
+  @timing_fields [
+    :finished_at,
+    :actual_seconds
   ]
 
   embedded_schema do
@@ -37,6 +43,11 @@ defmodule GraphicsAPI.Runs.Participant do
     participant
     |> cast(params, @fields)
     |> validate_required([:display_name])
+  end
+
+  def timing_changeset(participant, params \\ %{}) do
+    participant
+    |> cast(params, @timing_fields)
   end
 
   def fields, do: @fields

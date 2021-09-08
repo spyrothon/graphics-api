@@ -3,6 +3,22 @@ defmodule GraphicsAPIWeb.RunsController do
 
   alias GraphicsAPI.Runs
 
+  defmacro modify_run(conn, run_id, action) do
+    quote bind_quoted: [conn: conn, run_id: run_id, action: action] do
+      with run = %Runs.Run{} <- Runs.get_run(run_id),
+           {:ok, changeset} <- action.(run) do
+        _respond_with_run(conn, changeset)
+      else
+        run when is_nil(run) ->
+          conn |> not_found()
+
+        {:error, changeset} ->
+          conn
+          |> changeset_error(changeset)
+      end
+    end
+  end
+
   get "" do
     json(conn, Runs.list_runs())
   end
@@ -18,11 +34,8 @@ defmodule GraphicsAPIWeb.RunsController do
   post "/" do
     run_params = conn.body_params
 
-    with {:ok, changeset} <- Runs.create_run(run_params),
-         %{id: created_id} <- changeset do
-      run = Runs.get_run(created_id)
-      GraphicsAPIWeb.SyncSocketHandler.update_run(run)
-      json(conn, run)
+    with {:ok, changeset} <- Runs.create_run(run_params) do
+      _respond_with_run(conn, changeset.data)
     else
       {:error, changeset} ->
         conn
@@ -32,37 +45,80 @@ defmodule GraphicsAPIWeb.RunsController do
 
   put "/:id" do
     run_id = conn.path_params["id"]
-    run_params = conn.body_params
 
-    with run = %Runs.Run{} <- Runs.get_run(run_id),
-         {:ok, changeset} <- Runs.update_run(run, run_params),
-         %{id: created_id} <- changeset do
-      run = Runs.get_run(created_id)
-      GraphicsAPIWeb.SyncSocketHandler.update_run(run)
-      json(conn, run)
-    else
-      run when is_nil(run) ->
-        conn |> not_found()
-
-      {:error, changeset} ->
-        conn
-        |> changeset_error(changeset)
-    end
+    modify_run(
+      conn,
+      run_id,
+      fn run ->
+        Runs.update_run(run, conn.body_params)
+      end
+    )
   end
 
   delete "/:id" do
     run_id = conn.path_params["id"]
 
-    with run = %Runs.Run{} <- Runs.get_run(run_id),
-         {:ok, _changeset} <- Runs.delete_run(run) do
-      no_content(conn)
-    else
-      nil ->
-        conn |> not_found()
+    modify_run(conn, run_id, &Runs.delete_run/1)
 
-      {:error, changeset} ->
-        conn
-        |> changeset_error(changeset)
-    end
+    no_content(conn)
+  end
+
+  patch "/:id/start" do
+    run_id = conn.path_params["id"]
+
+    modify_run(conn, run_id, &Runs.Timing.start_run/1)
+  end
+
+  patch "/:id/finish" do
+    run_id = conn.path_params["id"]
+
+    modify_run(conn, run_id, &Runs.Timing.finish_run/1)
+  end
+
+  patch "/:id/pause" do
+    run_id = conn.path_params["id"]
+
+    modify_run(conn, run_id, &Runs.Timing.pause_run/1)
+  end
+
+  patch "/:id/resume" do
+    run_id = conn.path_params["id"]
+
+    modify_run(conn, run_id, &Runs.Timing.resume_run/1)
+  end
+
+  patch "/:id/reset" do
+    run_id = conn.path_params["id"]
+
+    modify_run(conn, run_id, &Runs.Timing.reset_run/1)
+  end
+
+  patch "/:id/finish-participant/:participant_id" do
+    run_id = conn.path_params["id"]
+
+    modify_run(
+      conn,
+      run_id,
+      fn run ->
+        Runs.Timing.finish_participant(run, conn.path_params["participant_id"])
+      end
+    )
+  end
+
+  patch "/:id/resume-participant/:participant_id" do
+    run_id = conn.path_params["id"]
+
+    modify_run(
+      conn,
+      run_id,
+      fn run ->
+        Runs.Timing.resume_participant(run, conn.path_params["participant_id"])
+      end
+    )
+  end
+
+  def _respond_with_run(conn, run) do
+    GraphicsAPIWeb.SyncSocketHandler.update_run(run)
+    json(conn, run)
   end
 end
