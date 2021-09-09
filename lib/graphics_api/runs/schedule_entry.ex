@@ -7,6 +7,15 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
     :schedule_id,
     :setup_seconds,
     :position,
+    :obs_scene_name,
+    :run_id,
+    :interview_id
+  ]
+
+  @updatable_fields [
+    :schedule_id,
+    :setup_seconds,
+    :obs_scene_name,
     :run_id,
     :interview_id
   ]
@@ -14,8 +23,9 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
   schema "runs_schedule_entries" do
     belongs_to(:schedule, GraphicsAPI.Runs.Schedule)
     field(:setup_seconds, :integer)
-
     field(:position, :integer)
+    field(:obs_scene_name, :string)
+
     belongs_to(:run, GraphicsAPI.Runs.Run)
     belongs_to(:interview, GraphicsAPI.Runs.Interview)
   end
@@ -27,7 +37,7 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
 
   def update_changeset(entry, params \\ %{}) do
     entry
-    |> cast(params, [:schedule_id, :setup_seconds, :run_id, :interview_id])
+    |> cast(params, @updatable_fields)
   end
 
   def fields, do: @fields
