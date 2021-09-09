@@ -57,39 +57,32 @@ defmodule GraphicsAPIWeb.RunsController do
 
   delete "/:id" do
     run_id = conn.path_params["id"]
-
     modify_run(conn, run_id, &Runs.delete_run/1)
-
     no_content(conn)
   end
 
   patch "/:id/start" do
     run_id = conn.path_params["id"]
-
     modify_run(conn, run_id, &Runs.Timing.start_run/1)
   end
 
   patch "/:id/finish" do
     run_id = conn.path_params["id"]
-
     modify_run(conn, run_id, &Runs.Timing.finish_run/1)
   end
 
   patch "/:id/pause" do
     run_id = conn.path_params["id"]
-
     modify_run(conn, run_id, &Runs.Timing.pause_run/1)
   end
 
   patch "/:id/resume" do
     run_id = conn.path_params["id"]
-
     modify_run(conn, run_id, &Runs.Timing.resume_run/1)
   end
 
   patch "/:id/reset" do
     run_id = conn.path_params["id"]
-
     modify_run(conn, run_id, &Runs.Timing.reset_run/1)
   end
 

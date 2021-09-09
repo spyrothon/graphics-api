@@ -2,6 +2,8 @@ defmodule GraphicsAPI.Runs.Schedule do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias GraphicsAPI.Runs.{Run, ScheduleEntry, Interview}
+
   @fields [
     :id,
     :run_title_template,
@@ -11,19 +13,21 @@ defmodule GraphicsAPI.Runs.Schedule do
     :debug
   ]
 
+  # Not serialized
+  # :obs_websocket_host
+
   schema "runs_schedules" do
-    has_many(:schedule_entries, GraphicsAPI.Runs.ScheduleEntry)
-    many_to_many(:runs, GraphicsAPI.Runs.Run, join_through: GraphicsAPI.Runs.ScheduleEntry)
-
-    many_to_many(:interviews, GraphicsAPI.Runs.Interview,
-      join_through: GraphicsAPI.Runs.ScheduleEntry
-    )
-
+    has_many(:schedule_entries, ScheduleEntry)
+    many_to_many(:runs, Run, join_through: ScheduleEntry)
+    many_to_many(:interviews, Interview, join_through: ScheduleEntry)
     field(:current_entry_id, :integer)
-    field(:debug, :boolean, default: true)
+
     field(:run_title_template, :string)
     field(:interview_title_template, :string)
     field(:break_title_template, :string)
+    field(:debug, :boolean, default: true)
+
+    belongs_to(:obs_websocket_host, GraphicsAPI.Integrations.OBSWebsocketConfig)
   end
 
   def changeset(participant, params \\ %{}) do

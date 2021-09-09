@@ -1,20 +1,18 @@
 defmodule GraphicsAPI.Integrations do
-  alias GraphicsAPI.Integrations.{TwitchToken}
+  import Ecto.Query, warn: false
+  alias GraphicsAPI.Repo
 
-  def get_twitch_access_token(twitch_id) do
-    integration = Repo.get(TwitchToken, twitch_id)
-    integration.access_token
+  alias GraphicsAPI.Integrations.{OBSWebsocketConfig}
+
+  def create_obs_config(params) do
+    %OBSWebsocketConfig{}
+    |> OBSWebsocketConfig.changeset(params)
+    |> Repo.insert()
   end
 
-  def is_valid(%TwitchToken{expires_at: expires_at}) do
-    now = DateTime.utc_now()
-
-    case DateTime.compare(now, expires_at) do
-      :lt -> true
-      _ -> false
-    end
-  end
-
-  def refresh_twitch(%TwitchToken{refresh_token: refresh_token}) do
+  def update_obs_config(config, params) do
+    config
+    |> OBSWebsocketConfig.changeset(params)
+    |> Repo.update()
   end
 end

@@ -2,13 +2,14 @@ defmodule GraphicsAPIWeb.SchedulesController do
   use GraphicsAPIWeb.APIController
 
   alias GraphicsAPI.Runs
+  alias GraphicsAPI.Integrations
 
   get "" do
     json(conn, Runs.list_schedules())
   end
 
   get "/:id" do
-    schedule_id = Map.get(conn.path_params, "id")
+    schedule_id = conn.path_params["id"]
 
     if schedule_id != nil do
       json(conn, Runs.get_schedule(schedule_id))
@@ -71,7 +72,7 @@ defmodule GraphicsAPIWeb.SchedulesController do
     entry_params = conn.body_params
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
-         {:ok, changeset} <- Runs.add_schedule_entry(schedule, entry_params) do
+         {:ok, _changeset} <- Runs.add_schedule_entry(schedule, entry_params) do
       schedule = Runs.get_schedule(schedule_id)
       GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
       json(conn, schedule)
@@ -121,6 +122,27 @@ defmodule GraphicsAPIWeb.SchedulesController do
       {:error, changeset} ->
         conn
         |> changeset_error(changeset)
+    end
+  end
+
+  get "/:id/obs" do
+    schedule_id = conn.path_params["id"]
+
+    with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id, with_config: true) do
+      json(conn, schedule.obs_websocket_host)
+    end
+  end
+
+  post "/:id/obs" do
+    schedule_id = conn.path_params["id"]
+    obs_params = conn.body_params
+
+    with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id, with_config: true),
+         {:ok, config} <- Integrations.update_obs_config(schedule.obs_websocket_host, obs_params) do
+      json(conn, config)
+    else
+      nil -> conn |> not_found()
+      {:error, changeset} -> conn |> changeset_error(changeset)
     end
   end
 end

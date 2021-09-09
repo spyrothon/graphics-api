@@ -79,9 +79,12 @@ defmodule GraphicsAPI.Runs do
     |> Repo.all()
   end
 
-  def get_schedule(schedule_id) do
+  def get_schedule(schedule_id, opts \\ []) do
+    with_config = Keyword.get(opts, :with_config, false)
+
     @schedules_query
     |> Repo.get(schedule_id)
+    |> Repo.preload(if with_config, do: [:obs_websocket_host], else: [])
   end
 
   def create_schedule(params) do
