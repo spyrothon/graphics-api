@@ -20,6 +20,11 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
     :interview_id
   ]
 
+  @embeds [
+    :enter_transitions,
+    :exit_transitions
+  ]
+
   schema "runs_schedule_entries" do
     belongs_to(:schedule, GraphicsAPI.Runs.Schedule)
     field(:setup_seconds, :integer)
@@ -28,11 +33,16 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
 
     belongs_to(:run, GraphicsAPI.Runs.Run)
     belongs_to(:interview, GraphicsAPI.Runs.Interview)
+
+    embeds_many(:enter_transitions, GraphicsAPI.Runs.Transition, on_replace: :delete)
+    embeds_many(:exit_transitions, GraphicsAPI.Runs.Transition, on_replace: :delete)
   end
 
   def changeset(entry, params \\ %{}) do
     entry
     |> cast(params, @fields)
+    |> cast_embed(:enter_transitions)
+    |> cast_embed(:exit_transitions)
   end
 
   def update_changeset(entry, params \\ %{}) do
@@ -40,7 +50,7 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
     |> cast(params, @updatable_fields)
   end
 
-  def fields, do: @fields
+  def fields, do: @fields ++ @embeds
 end
 
 defimpl Jason.Encoder, for: [GraphicsAPI.Runs.ScheduleEntry] do
