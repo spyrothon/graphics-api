@@ -5,19 +5,23 @@ defmodule GraphicsAPI.Runs.Transition do
   @fields [
     :id,
     :obs_transition_in_name,
-    :obs_scene_name
+    :obs_scene_name,
+    :obs_primary_source_name,
+    :scene_duration
   ]
 
   embedded_schema do
     field(:name, :string)
     field(:obs_transition_in_name, :string)
     field(:obs_scene_name, :string)
+    field(:obs_media_source_name, :string)
+    field(:scene_duration, :integer)
   end
 
   def changeset(participant, params \\ %{}) do
     participant
     |> cast(params, @fields)
-    |> validate_required([:display_name])
+    |> validate_required([:obs_transition_in_name, :obs_scene_name])
   end
 
   def fields, do: @fields
