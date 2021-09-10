@@ -6,7 +6,8 @@ defmodule GraphicsAPI.Runs.Transition do
     :id,
     :obs_transition_in_name,
     :obs_scene_name,
-    :obs_primary_source_name,
+    :obs_media_source_name,
+    :transition_duration,
     :scene_duration
   ]
 
@@ -15,6 +16,7 @@ defmodule GraphicsAPI.Runs.Transition do
     field(:obs_transition_in_name, :string)
     field(:obs_scene_name, :string)
     field(:obs_media_source_name, :string)
+    field(:transition_duration, :integer)
     field(:scene_duration, :integer)
   end
 

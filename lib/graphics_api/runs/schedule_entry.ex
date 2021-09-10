@@ -48,6 +48,8 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
   def update_changeset(entry, params \\ %{}) do
     entry
     |> cast(params, @updatable_fields)
+    |> cast_embed(:enter_transitions)
+    |> cast_embed(:exit_transitions)
   end
 
   def fields, do: @fields ++ @embeds
