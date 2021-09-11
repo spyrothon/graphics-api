@@ -11,8 +11,9 @@ defmodule GraphicsAPI.Integrations do
   end
 
   def update_obs_config(config, params) do
-    config
+    (config ||
+       %OBSWebsocketConfig{})
     |> OBSWebsocketConfig.changeset(params)
-    |> Repo.update()
+    |> Repo.insert(on_conflict: :replace_all, conflict_target: :id)
   end
 end

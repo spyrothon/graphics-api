@@ -1,6 +1,6 @@
 defmodule Twitch do
   use Tesla
-  alias Twitch.{Authentication, TokenManager}
+  alias Twitch.{Authentication}
 
   @broadcaster_id Application.get_env(:graphics_api, Twitch)[:broadcaster_id]
   @client_id Application.get_env(:graphics_api, Twitch)[:client_id]
@@ -39,15 +39,8 @@ defmodule Twitch do
           optional(:title) => String.t()
         }) :: :ok | {:error, String.t()}
   def modify_channel_information(opts) do
-    game_name = Map.get(opts, :game_name)
+    game_id = Map.get(opts, :game_name) |> _get_matching_game_id()
     title = Map.get(opts, :title)
-
-    {:ok, games_data} = Twitch.get_games(name: game_name)
-
-    game_id =
-      games_data
-      |> hd()
-      |> Map.get("id")
 
     response =
       client()
@@ -62,6 +55,15 @@ defmodule Twitch do
       {:error, reason} ->
         IO.puts(reason)
         {:error, reason}
+    end
+  end
+
+  def _get_matching_game_id(game_name) do
+    {:ok, games_data} = Twitch.get_games(name: game_name)
+
+    case games_data do
+      [game | _rest] -> Map.get(game, "id")
+      _ -> nil
     end
   end
 

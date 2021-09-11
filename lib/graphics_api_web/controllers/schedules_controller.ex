@@ -138,8 +138,9 @@ defmodule GraphicsAPIWeb.SchedulesController do
     obs_params = conn.body_params
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id, with_config: true),
-         {:ok, config} <- Integrations.update_obs_config(schedule.obs_websocket_host, obs_params) do
-      json(conn, config)
+         {:ok, schedule} <- Runs.update_schedule(schedule, %{obs_websocket_host: obs_params}) do
+      GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
+      json(conn, schedule.obs_websocket_host)
     else
       nil -> conn |> not_found()
       {:error, changeset} -> conn |> changeset_error(changeset)

@@ -3,7 +3,6 @@ defmodule GraphicsAPI.Integrations.OBSWebsocketConfig do
   import Ecto.Changeset
 
   @fields [
-    :id,
     :name,
     :host,
     :port,
@@ -20,10 +19,10 @@ defmodule GraphicsAPI.Integrations.OBSWebsocketConfig do
   def changeset(config, params \\ %{}) do
     config
     |> cast(params, @fields)
-    |> validate_required(@fields)
+    |> validate_required([:host, :port, :password])
   end
 
-  def fields(), do: @fields
+  def fields(), do: [:id] ++ @fields
 
   require Protocol
   Protocol.derive(Jason.Encoder, GraphicsAPI.Integrations.OBSWebsocketConfig, only: @fields)

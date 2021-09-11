@@ -2,7 +2,7 @@ defmodule GraphicsAPI.Users do
   import Ecto.Query, warn: false
   alias GraphicsAPI.Repo
 
-  alias GraphicsAPI.Users.{User}
+  alias GraphicsAPI.Users.{Init, User}
 
   def list_users() do
     Repo.all(User)
@@ -27,5 +27,20 @@ defmodule GraphicsAPI.Users do
   def delete_user(user = %User{}) do
     user
     |> Repo.delete()
+  end
+
+  ###
+  # Init
+  ###
+
+  def get_init!() do
+    # TODO: Make this dynamic?
+    Repo.get!(Init, 1)
+  end
+
+  def update_init(params) do
+    get_init!()
+    |> Init.changeset(params)
+    |> Repo.update()
   end
 end
