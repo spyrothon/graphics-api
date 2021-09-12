@@ -25,7 +25,7 @@ defmodule GraphicsAPI.Runs.Schedule do
   @required_fields [
     :name,
     :series,
-    :twitch_url
+    :start_time
   ]
 
   # NOTE: Not serialized
