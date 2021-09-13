@@ -120,8 +120,13 @@ defmodule GraphicsAPI.Runs do
   end
 
   def add_schedule_entry(schedule = %Schedule{}, entry_params) do
-    entries = schedule.schedule_entries
-    %{position: last_position} = List.last(entries)
+    entries = schedule.schedule_entries || []
+
+    next_position =
+      case Enum.at(entries, -1) do
+        %{position: last_position} -> last_position + 1
+        nil -> 0
+      end
 
     updated_entry =
       entry_params

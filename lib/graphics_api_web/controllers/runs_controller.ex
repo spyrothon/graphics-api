@@ -35,7 +35,7 @@ defmodule GraphicsAPIWeb.RunsController do
     run_params = conn.body_params
 
     with {:ok, changeset} <- Runs.create_run(run_params) do
-      _respond_with_run(conn, changeset.data)
+      _respond_with_run(conn, changeset)
     else
       {:error, changeset} ->
         conn
