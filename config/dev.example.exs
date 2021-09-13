@@ -7,7 +7,8 @@ config :graphics_api, GraphicsAPI.Repo,
   hostname: "localhost"
 
 config :cors_plug,
-  origin: ["*"]
+  origin: ["*"],
+  headers: ["*"]
 
 # UPDATE: Replace the access token with your channel's user access token from Twitch.
 # ALSO: Be sure to add the client_id to `dev.json`.
