@@ -2,7 +2,6 @@ defmodule GraphicsAPIWeb.SchedulesController do
   use GraphicsAPIWeb.APIController
 
   alias GraphicsAPI.Runs
-  alias GraphicsAPI.Integrations
 
   get "" do
     json(conn, Runs.list_schedules())
@@ -19,9 +18,7 @@ defmodule GraphicsAPIWeb.SchedulesController do
   post "/" do
     schedule_params = conn.body_params
 
-    with {:ok, changeset} <- Runs.create_schedule(schedule_params),
-         %{id: created_id} <- changeset do
-      schedule = Runs.get_schedule(created_id)
+    with {:ok, schedule} <- Runs.create_schedule(schedule_params) do
       GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
       json(conn, schedule)
     else
@@ -36,9 +33,7 @@ defmodule GraphicsAPIWeb.SchedulesController do
     schedule_params = conn.body_params
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
-         {:ok, changeset} <- Runs.update_schedule(schedule, schedule_params),
-         %{id: updated_id} <- changeset do
-      schedule = Runs.get_schedule(updated_id)
+         {:ok, schedule} <- Runs.update_schedule(schedule, schedule_params) do
       GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
       json(conn, schedule)
     else
@@ -55,7 +50,7 @@ defmodule GraphicsAPIWeb.SchedulesController do
     schedule_id = conn.path_params["id"]
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
-         {:ok, _changeset} <- Runs.delete_schedule(schedule) do
+         {:ok, _schedule} <- Runs.delete_schedule(schedule) do
       no_content(conn)
     else
       nil ->
@@ -72,8 +67,7 @@ defmodule GraphicsAPIWeb.SchedulesController do
     entry_params = conn.body_params
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
-         {:ok, _changeset} <- Runs.add_schedule_entry(schedule, entry_params) do
-      schedule = Runs.get_schedule(schedule_id)
+         {:ok, schedule} <- Runs.add_schedule_entry(schedule, entry_params) do
       GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
       json(conn, schedule)
     else

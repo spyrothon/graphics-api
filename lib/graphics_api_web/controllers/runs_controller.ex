@@ -6,8 +6,8 @@ defmodule GraphicsAPIWeb.RunsController do
   defmacro modify_run(conn, run_id, action) do
     quote bind_quoted: [conn: conn, run_id: run_id, action: action] do
       with run = %Runs.Run{} <- Runs.get_run(run_id),
-           {:ok, changeset} <- action.(run) do
-        _respond_with_run(conn, changeset)
+           {:ok, updated_run} <- action.(run) do
+        _respond_with_run(conn, updated_run)
       else
         run when is_nil(run) ->
           conn |> not_found()
@@ -34,8 +34,8 @@ defmodule GraphicsAPIWeb.RunsController do
   post "/" do
     run_params = conn.body_params
 
-    with {:ok, changeset} <- Runs.create_run(run_params) do
-      _respond_with_run(conn, changeset)
+    with {:ok, run} <- Runs.create_run(run_params) do
+      _respond_with_run(conn, run)
     else
       {:error, changeset} ->
         conn

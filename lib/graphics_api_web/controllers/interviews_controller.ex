@@ -18,9 +18,7 @@ defmodule GraphicsAPIWeb.InterviewsController do
   post "/" do
     interview_params = conn.body_params
 
-    with {:ok, changeset} <- Runs.create_interview(interview_params),
-         %{id: created_id} <- changeset do
-      interview = Runs.get_interview(created_id)
+    with {:ok, interview} <- Runs.create_interview(interview_params) do
       GraphicsAPIWeb.SyncSocketHandler.update_interview(interview)
       json(conn, interview)
     else
@@ -35,9 +33,7 @@ defmodule GraphicsAPIWeb.InterviewsController do
     interview_params = conn.body_params
 
     with interview = %Runs.Interview{} <- Runs.get_interview(interview_id),
-         {:ok, changeset} <- Runs.update_interview(interview, interview_params),
-         %{id: created_id} <- changeset do
-      interview = Runs.get_interview(created_id)
+         {:ok, interview} <- Runs.update_interview(interview, interview_params) do
       GraphicsAPIWeb.SyncSocketHandler.update_interview(interview)
       json(conn, interview)
     else
@@ -54,7 +50,7 @@ defmodule GraphicsAPIWeb.InterviewsController do
     interview_id = conn.path_params["id"]
 
     with interview = %Runs.Interview{} <- Runs.get_interview(interview_id),
-         {:ok, _changeset} <- Runs.delete_interview(interview) do
+         {:ok, _interview} <- Runs.delete_interview(interview) do
       no_content(conn)
     else
       nil ->

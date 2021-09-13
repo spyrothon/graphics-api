@@ -4,6 +4,7 @@ defmodule GraphicsAPIWeb.Router do
   plug(:match)
   plug(:dispatch)
 
+  forward("/api/v1/auth", to: GraphicsAPIWeb.AuthController)
   forward("/api/v1/users", to: GraphicsAPIWeb.UsersController)
   forward("/api/v1/runs", to: GraphicsAPIWeb.RunsController)
   forward("/api/v1/schedules", to: GraphicsAPIWeb.SchedulesController)

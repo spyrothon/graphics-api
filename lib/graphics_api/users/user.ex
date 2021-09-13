@@ -2,35 +2,57 @@ defmodule GraphicsAPI.Users.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @fields [
+    :id,
+    :name,
+    :password_hash,
+    :role,
+    :inserted_at,
+    :updated_at
+  ]
+
+  @cast_fields [
+    :name,
+    :password,
+    :role
+  ]
+
   @required_fields [
-    :name
+    :name,
+    :password_hash
   ]
 
-  @optional_fields [
-    :twitch_name,
-    :twitter_name,
-    :discord_name
-  ]
+  @visible_fields @fields -- [:password, :password_hash]
 
-  @fields [:id, :inserted_at, :updated_at] ++ @required_fields ++ @optional_fields
-
+  @derive {Jason.Encoder, only: @visible_fields}
   schema "users_users" do
     field(:name, :string)
-    field(:twitch_name, :string)
-    field(:twitter_name, :string)
-    field(:discord_name, :string)
+    field(:password, :string, virtual: true)
+    field(:password_hash, :string)
+    field(:role, Ecto.Enum, values: GraphicsAPI.Users.Permissions.roles())
 
     timestamps()
   end
 
-  def changeset(run, params \\ %{}) do
-    run
-    |> cast(params, @fields)
+  def changeset(user, params \\ %{}) do
+    user
+    |> cast(params, @cast_fields)
+    |> unique_constraint(:name)
+    |> _put_password_hash()
     |> validate_required(@required_fields)
   end
 
-  def fields, do: @fields
+  defp _put_password_hash(
+         changeset = %Ecto.Changeset{valid?: true, changes: %{password: password}}
+       ) do
+    change(changeset, Argon2.add_hash(password))
+  end
 
-  require Protocol
-  Protocol.derive(Jason.Encoder, GraphicsAPI.Users.User, only: @fields)
+  defp _put_password_hash(changeset), do: changeset
+
+  def verify_password(user, password) do
+    Argon2.check_pass(user, password)
+  end
+
+  def fields, do: @fields
 end

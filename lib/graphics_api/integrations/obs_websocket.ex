@@ -23,9 +23,6 @@ defmodule GraphicsAPI.Integrations.OBSWebsocketConfig do
   end
 
   def fields(), do: [:id] ++ @fields
-
-  require Protocol
-  Protocol.derive(Jason.Encoder, GraphicsAPI.Integrations.OBSWebsocketConfig, only: @fields)
 end
 
 defimpl Jason.Encoder, for: [GraphicsAPI.Integrations.OBSWebsocketConfig] do
