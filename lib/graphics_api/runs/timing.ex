@@ -25,71 +25,87 @@ defmodule GraphicsAPI.Runs.Timing do
   def is_running(run), do: is_started(run) && !is_paused(run) && !is_finished(run)
 
   def start_run(run = %Run{}, start_time \\ DateTime.utc_now()) do
-    if is_pending(run) do
-      run
-      |> Run.timing_changeset(%{
-        started_at: start_time,
-        finished: false,
-        finished_at: nil,
-        actual_seconds: nil,
-        pause_seconds: nil,
-        paused_at: nil
-      })
-      |> Repo.update()
+    cond do
+      is_pending(run) ->
+        run
+        |> Run.timing_changeset(%{
+          started_at: start_time,
+          finished: false,
+          finished_at: nil,
+          actual_seconds: nil,
+          pause_seconds: nil,
+          paused_at: nil
+        })
+        |> Repo.update()
+
+      true ->
+        {:ok, run}
     end
   end
 
   def finish_run(run = %Run{}, finish_time \\ DateTime.utc_now()) do
-    if is_started(run) and not is_finished(run) do
-      actual_seconds = DateTime.diff(finish_time, run.started_at) - (run.pause_seconds || 0)
+    cond do
+      is_started(run) and not is_finished(run) ->
+        actual_seconds = DateTime.diff(finish_time, run.started_at) - (run.pause_seconds || 0)
 
-      updated_runners =
-        run.runners
-        |> Enum.map(fn runner ->
-          %{
-            runner
-            | finished_at: Map.get(runner, :finished_at, finish_time),
-              actual_seconds: Map.get(runner, :actual_seconds, actual_seconds)
-          }
-          |> Map.from_struct()
-        end)
+        updated_runners =
+          run.runners
+          |> Enum.map(fn runner ->
+            %{
+              runner
+              | finished_at: Map.get(runner, :finished_at, finish_time),
+                actual_seconds: Map.get(runner, :actual_seconds, actual_seconds)
+            }
+            |> Map.from_struct()
+          end)
 
-      run
-      |> Run.timing_changeset(%{
-        finished_at: finish_time,
-        finished: true,
-        actual_seconds: actual_seconds,
-        runners: updated_runners
-      })
-      |> Repo.update()
+        run
+        |> Run.timing_changeset(%{
+          finished_at: finish_time,
+          finished: true,
+          actual_seconds: actual_seconds,
+          runners: updated_runners
+        })
+        |> Repo.update()
+
+      true ->
+        {:ok, run}
     end
   end
 
   def pause_run(run = %Run{}, pause_time \\ DateTime.utc_now()) do
-    if is_running(run) do
-      run
-      |> Run.timing_changeset(%{paused_at: pause_time})
-      |> Repo.update()
+    cond do
+      is_running(run) ->
+        run
+        |> Run.timing_changeset(%{paused_at: pause_time})
+        |> Repo.update()
+
+      true ->
+        {:ok, run}
     end
   end
 
   def resume_run(run = %Run{}, resume_time \\ DateTime.utc_now()) do
-    if is_paused(run) or is_finished(run) do
-      pause_seconds =
-        cond do
-          is_paused(run) -> DateTime.diff(resume_time, run.paused_at) + (run.pause_seconds || 0)
-          true -> run.pause_seconds
-        end
+    cond do
+      is_paused(run) or is_finished(run) ->
+        pause_seconds =
+          cond do
+            is_paused(run) -> DateTime.diff(resume_time, run.paused_at) + (run.pause_seconds || 0)
+            true -> run.pause_seconds
+          end
 
-      run
-      |> Run.timing_changeset(%{
-        finished_at: nil,
-        finished: false,
-        actual_seconds: nil,
-        pause_seconds: pause_seconds,
-        paused_at: nil
-      })
-      |> Repo.update()
+        run
+        |> Run.timing_changeset(%{
+          finished_at: nil,
+          finished: false,
+          actual_seconds: nil,
+          pause_seconds: pause_seconds,
+          paused_at: nil
+        })
+        |> Repo.update()
+
+      true ->
+        {:ok, run}
     end
   end
 
