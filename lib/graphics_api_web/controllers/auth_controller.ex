@@ -4,8 +4,6 @@ defmodule GraphicsAPIWeb.AuthController do
   alias GraphicsAPI.Users
 
   get "/me" do
-    IO.inspect(conn.assigns)
-
     case Map.get(conn.assigns, :current_user) do
       nil -> not_found(conn)
       current_user -> json(conn, current_user)
