@@ -67,9 +67,10 @@ defmodule GraphicsAPIWeb.SchedulesController do
     entry_params = conn.body_params
 
     with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
-         {:ok, schedule} <- Runs.add_schedule_entry(schedule, entry_params) do
+         {:ok, entry} <- Runs.add_schedule_entry(schedule, entry_params) do
+      schedule = Runs.get_schedule(schedule_id)
       GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
-      json(conn, schedule)
+      json(conn, entry)
     else
       schedule when is_nil(schedule) ->
         conn |> not_found()
@@ -105,10 +106,10 @@ defmodule GraphicsAPIWeb.SchedulesController do
     entry_params = conn.body_params
 
     with entry = %Runs.ScheduleEntry{} <- Runs.get_schedule_entry(entry_id),
-         {:ok, _changeset} <- Runs.update_schedule_entry(entry, entry_params) do
+         {:ok, entry} <- Runs.update_schedule_entry(entry, entry_params) do
       schedule = Runs.get_schedule(schedule_id)
       GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
-      json(conn, Runs.get_schedule_entry(entry_id))
+      json(conn, entry)
     else
       nil ->
         conn |> not_found()
@@ -116,6 +117,21 @@ defmodule GraphicsAPIWeb.SchedulesController do
       {:error, changeset} ->
         conn
         |> changeset_error(changeset)
+    end
+  end
+
+  put "/:schedule_id/transition" do
+    schedule_id = conn.path_params["schedule_id"]
+    body_params = conn.body_params
+
+    with %{"entry_id" => new_entry_id} <- body_params,
+         schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
+         {:ok, schedule} <- Runs.transition_schedule_to_entry(schedule, new_entry_id) do
+      json(conn, schedule)
+    else
+      nil -> not_found(conn)
+      ^body_params -> params_error(conn)
+      {:error, changeset} -> changeset_error(conn, changeset)
     end
   end
 

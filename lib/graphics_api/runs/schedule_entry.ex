@@ -5,8 +5,12 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
   @fields [
     :id,
     :schedule_id,
-    :setup_seconds,
     :position,
+    :setup_seconds,
+    :actual_setup_seconds,
+    :entered_at,
+    :exited_at,
+    :duration_seconds,
     :obs_scene_name,
     :run_id,
     :interview_id
@@ -15,6 +19,10 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
   @updatable_fields [
     :schedule_id,
     :setup_seconds,
+    :actual_setup_seconds,
+    :entered_at,
+    :exited_at,
+    :duration_seconds,
     :obs_scene_name,
     :run_id,
     :interview_id
@@ -28,7 +36,11 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
   schema "runs_schedule_entries" do
     belongs_to(:schedule, GraphicsAPI.Runs.Schedule)
     field(:setup_seconds, :integer)
+    field(:actual_setup_seconds, :integer)
     field(:position, :integer)
+    field(:entered_at, :utc_datetime)
+    field(:exited_at, :utc_datetime)
+    field(:duration_seconds, :integer)
     field(:obs_scene_name, :string)
 
     belongs_to(:run, GraphicsAPI.Runs.Run)
@@ -43,6 +55,7 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
     |> cast(params, @fields)
     |> cast_embed(:enter_transitions)
     |> cast_embed(:exit_transitions)
+    |> _update_duration()
   end
 
   def update_changeset(entry, params \\ %{}) do
@@ -50,6 +63,26 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
     |> cast(params, @updatable_fields)
     |> cast_embed(:enter_transitions)
     |> cast_embed(:exit_transitions)
+    |> _update_duration()
+  end
+
+  defp _update_duration(changeset) do
+    entered_at = get_field(changeset, :entered_at)
+    exited_at = get_field(changeset, :exited_at)
+    did_change = get_change(changeset, :entered_at) || get_change(changeset, :exited_at)
+
+    cond do
+      did_change == false ->
+        changeset
+
+      entered_at != nil && exited_at != nil ->
+        changeset
+        |> put_change(:duration_seconds, DateTime.diff(exited_at, entered_at))
+
+      true ->
+        changeset
+        |> put_change(:duration_seconds, nil)
+    end
   end
 
   def fields, do: @fields ++ @embeds

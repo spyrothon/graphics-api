@@ -93,9 +93,9 @@ defmodule GraphicsAPI.Runs do
     |> Repo.insert()
   end
 
-  def update_schedule(schedule = %Schedule{}, params) do
+  def update_schedule(original_schedule = %Schedule{}, params) do
     {:ok, schedule} =
-      schedule
+      original_schedule
       |> Schedule.changeset(params)
       |> Repo.update()
 
@@ -142,6 +142,27 @@ defmodule GraphicsAPI.Runs do
     ScheduleEntry
     |> Repo.get!(entry_id)
     |> Repo.delete()
+  end
+
+  def transition_schedule_to_entry(schedule = %Schedule{}, new_entry_id) do
+    old_entry_id = schedule.current_entry_id
+    transition_time = DateTime.utc_now()
+
+    {:ok, schedule} = update_schedule(schedule, %{current_entry_id: new_entry_id})
+
+    if old_entry_id != nil do
+      {:ok, _entry} =
+        get_schedule_entry(old_entry_id)
+        |> update_schedule_entry(%{exited_at: transition_time})
+    end
+
+    if new_entry_id != nil do
+      {:ok, _entry} =
+        get_schedule_entry(new_entry_id)
+        |> update_schedule_entry(%{entered_at: transition_time, exited_at: nil})
+    end
+
+    {:ok, schedule}
   end
 
   defp _update_twitch_channel_info(schedule = %Schedule{}) do
