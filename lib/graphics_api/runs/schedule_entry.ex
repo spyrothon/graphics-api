@@ -29,8 +29,8 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
   ]
 
   @embeds [
-    :enter_transitions,
-    :exit_transitions
+    :enter_transition_set,
+    :exit_transition_set
   ]
 
   schema "runs_schedule_entries" do
@@ -46,23 +46,23 @@ defmodule GraphicsAPI.Runs.ScheduleEntry do
     belongs_to(:run, GraphicsAPI.Runs.Run)
     belongs_to(:interview, GraphicsAPI.Runs.Interview)
 
-    embeds_many(:enter_transitions, GraphicsAPI.Runs.Transition, on_replace: :delete)
-    embeds_many(:exit_transitions, GraphicsAPI.Runs.Transition, on_replace: :delete)
+    belongs_to(:enter_transition_set, GraphicsAPI.Runs.TransitionSet)
+    belongs_to(:exit_transition_set, GraphicsAPI.Runs.TransitionSet)
   end
 
   def changeset(entry, params \\ %{}) do
     entry
     |> cast(params, @fields)
-    |> cast_embed(:enter_transitions)
-    |> cast_embed(:exit_transitions)
+    |> cast_assoc(:enter_transition_set)
+    |> cast_assoc(:exit_transition_set)
     |> _update_duration()
   end
 
   def update_changeset(entry, params \\ %{}) do
     entry
     |> cast(params, @updatable_fields)
-    |> cast_embed(:enter_transitions)
-    |> cast_embed(:exit_transitions)
+    |> cast_assoc(:enter_transition_set)
+    |> cast_assoc(:exit_transition_set)
     |> _update_duration()
   end
 

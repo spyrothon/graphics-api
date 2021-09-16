@@ -70,7 +70,11 @@ defmodule GraphicsAPI.Runs do
                      preload: [
                        :runs,
                        :interviews,
-                       schedule_entries: ^from(e in ScheduleEntry, order_by: [asc: e.position])
+                       schedule_entries:
+                         ^from(e in ScheduleEntry,
+                           order_by: [asc: e.position],
+                           preload: [:enter_transition_set, :exit_transition_set]
+                         )
                      ]
                    )
 
@@ -111,10 +115,21 @@ defmodule GraphicsAPI.Runs do
 
   def get_schedule_entry(entry_id) do
     Repo.get(ScheduleEntry, entry_id)
+    |> Repo.preload([:enter_transition_set, :exit_transition_set])
+  end
+
+  def get_schedule_entry_for_transition_set(set_id) do
+    Repo.one(
+      from(s in ScheduleEntry,
+        where: s.exit_transition_set_id == ^set_id or s.enter_transition_set_id == ^set_id
+      )
+    )
+    |> Repo.preload([:enter_transition_set, :exit_transition_set])
   end
 
   def update_schedule_entry(entry = %ScheduleEntry{}, entry_params) do
     entry
+    |> IO.inspect()
     |> ScheduleEntry.update_changeset(entry_params)
     |> Repo.update()
   end

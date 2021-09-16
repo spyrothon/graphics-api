@@ -8,7 +8,8 @@ defmodule GraphicsAPI.Runs.Transition do
     :obs_scene_name,
     :obs_media_source_name,
     :transition_duration,
-    :scene_duration
+    :scene_duration,
+    :state
   ]
 
   embedded_schema do
@@ -18,6 +19,11 @@ defmodule GraphicsAPI.Runs.Transition do
     field(:obs_media_source_name, :string)
     field(:transition_duration, :integer)
     field(:scene_duration, :integer)
+
+    field(:state, Ecto.Enum,
+      values: GraphicsAPI.Runs.TransitionState.states(),
+      default: GraphicsAPI.Runs.TransitionState.pending()
+    )
   end
 
   def changeset(participant, params \\ %{}) do
