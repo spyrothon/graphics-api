@@ -129,7 +129,6 @@ defmodule GraphicsAPI.Runs do
 
   def update_schedule_entry(entry = %ScheduleEntry{}, entry_params) do
     entry
-    |> IO.inspect()
     |> ScheduleEntry.update_changeset(entry_params)
     |> Repo.update()
   end

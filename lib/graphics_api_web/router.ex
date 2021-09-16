@@ -10,6 +10,7 @@ defmodule GraphicsAPIWeb.Router do
   forward("/api/v1/runs", to: GraphicsAPIWeb.RunsController)
   forward("/api/v1/schedules", to: GraphicsAPIWeb.SchedulesController)
   forward("/api/v1/interviews", to: GraphicsAPIWeb.InterviewsController)
+  forward("/api/v1/transition-sets", to: GraphicsAPIWeb.TransitionSetsController)
 
   match(_, do: send_resp(conn, 404, ""))
 end

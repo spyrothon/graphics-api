@@ -63,6 +63,15 @@ defmodule GraphicsAPI.Runs.Transitions do
     end
   end
 
+  def reset_transition_set(set = %TransitionSet{}) do
+    set.transitions
+    |> Enum.map(&reset_transition(set.id, &1.id))
+    |> Enum.all?(fn
+      {:ok, _} -> true
+      _ -> false
+    end)
+  end
+
   defp _do_update_transition(transitions, transition_id, updater) do
     Enum.map(transitions, fn
       transition = %{id: ^transition_id} -> updater.(transition)

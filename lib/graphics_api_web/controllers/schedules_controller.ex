@@ -127,6 +127,7 @@ defmodule GraphicsAPIWeb.SchedulesController do
     with %{"entry_id" => new_entry_id} <- body_params,
          schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
          {:ok, schedule} <- Runs.transition_schedule_to_entry(schedule, new_entry_id) do
+      GraphicsAPIWeb.SyncSocketHandler.update_schedule(schedule)
       json(conn, schedule)
     else
       nil -> not_found(conn)
