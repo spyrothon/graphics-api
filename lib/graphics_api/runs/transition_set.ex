@@ -14,7 +14,7 @@ defmodule GraphicsAPI.Runs.TransitionSet do
   schema "runs_transition_sets" do
     field(:state, Ecto.Enum, values: GraphicsAPI.Runs.TransitionState.states())
 
-    embeds_many(:transitions, GraphicsAPI.Runs.Transition)
+    embeds_many(:transitions, GraphicsAPI.Runs.Transition, on_replace: :delete)
   end
 
   def changeset(participant, params \\ %{}) do
