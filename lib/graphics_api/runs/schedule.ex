@@ -18,6 +18,9 @@ defmodule GraphicsAPI.Runs.Schedule do
     :run_title_template,
     :interview_title_template,
     :break_title_template,
+    :rtmp_host,
+
+    # Live controls
     :current_entry_id,
     :debug
   ]
@@ -46,6 +49,8 @@ defmodule GraphicsAPI.Runs.Schedule do
     field(:run_title_template, :string)
     field(:interview_title_template, :string)
     field(:break_title_template, :string)
+    field(:rtmp_host, :string)
+
     field(:current_entry_id, :integer)
     field(:debug, :boolean, default: true)
 
