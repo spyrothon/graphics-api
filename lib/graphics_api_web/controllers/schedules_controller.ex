@@ -157,4 +157,16 @@ defmodule GraphicsAPIWeb.SchedulesController do
       {:error, changeset} -> conn |> changeset_error(changeset)
     end
   end
+
+  get "/:id/rtmp-stat" do
+    schedule_id = conn.path_params["id"]
+
+    with schedule = %Runs.Schedule{} <- Runs.get_schedule(schedule_id),
+         {:ok, response} <- RTMPStat.get_stat(rtmp_host: schedule.rtmp_host) do
+      json(conn, response)
+    else
+      nil -> conn |> not_found()
+      {:error, changeset} -> conn |> changeset_error(changeset)
+    end
+  end
 end
