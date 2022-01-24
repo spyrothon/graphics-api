@@ -9,6 +9,7 @@ defmodule GraphicsAPI.Newsletters.Newsletter do
     :title,
     :introduction,
     :published,
+    :published_at,
     :inserted_at,
     :updated_at
   ]
@@ -22,8 +23,9 @@ defmodule GraphicsAPI.Newsletters.Newsletter do
     field(:title, :string)
     field(:introduction, :string)
     field(:published, :boolean)
+    field(:published_at, :utc_datetime)
 
-    has_many(:publications, Publication)
+    has_many(:publications, Publication, on_replace: :delete)
     many_to_many(:articles, Article, join_through: Publication)
 
     timestamps()
