@@ -147,9 +147,18 @@ defmodule GraphicsAPI.Runs do
       |> Map.put("position", Map.get(entry_params, :position, next_position))
       |> Map.put("schedule_id", schedule.id)
 
-    %ScheduleEntry{}
-    |> ScheduleEntry.changeset(updated_entry)
-    |> Repo.insert()
+    {:ok, entry} =
+      %ScheduleEntry{}
+      |> ScheduleEntry.changeset(updated_entry)
+      |> Repo.insert()
+
+    # If the schedule doesn't yet have a current entry, this must be the first
+    # one, so set it as the current entry to ensure dashboards and everything work.
+    if schedule.current_entry_id == nil do
+      transition_schedule_to_entry(schedule, entry.id)
+    end
+
+    {:ok, entry}
   end
 
   def remove_schedule_entry(%Schedule{}, entry_id) do
