@@ -7,6 +7,7 @@ defmodule GraphicsAPI.Runs.Participant do
     :display_name,
     :twitch_name,
     :twitter_name,
+    :pronouns,
     :has_webcam,
     :visible,
 
@@ -27,6 +28,7 @@ defmodule GraphicsAPI.Runs.Participant do
     field(:display_name, :string)
     field(:twitch_name, :string)
     field(:twitter_name, :string)
+    field(:pronouns, :string)
 
     field(:has_webcam, :boolean, default: false)
     field(:visible, :boolean, default: true)
