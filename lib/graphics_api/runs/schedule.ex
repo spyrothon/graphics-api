@@ -22,7 +22,15 @@ defmodule GraphicsAPI.Runs.Schedule do
 
     # Live controls
     :current_entry_id,
-    :debug
+    :debug,
+
+    # Tagline configuration
+    :break_left_title,
+    :break_left_subtitle,
+    :break_right_title,
+    :break_right_subtitle,
+    :outro_title,
+    :outro_subtitle
   ]
 
   @required_fields [
@@ -53,6 +61,13 @@ defmodule GraphicsAPI.Runs.Schedule do
 
     field(:current_entry_id, :integer)
     field(:debug, :boolean, default: true)
+
+    field(:break_left_title, :string)
+    field(:break_left_subtitle, :string)
+    field(:break_right_title, :string)
+    field(:break_right_subtitle, :string)
+    field(:outro_title, :string)
+    field(:outro_subtitle, :string)
 
     belongs_to(:obs_websocket_host, GraphicsAPI.Integrations.OBSWebsocketConfig,
       on_replace: :update

@@ -16,7 +16,13 @@ defmodule GraphicsAPI.Runs.Participant do
     :actual_seconds,
 
     # Interview Fields
-    :score
+    :score,
+
+    # Video ingest
+    :gameplay_ingest_url,
+    :gameplay_crop_transform,
+    :webcam_ingest_url,
+    :webcam_crop_transform
   ]
 
   @timing_fields [
@@ -39,6 +45,12 @@ defmodule GraphicsAPI.Runs.Participant do
 
     # Interview Fields
     field(:score, :integer, default: 0)
+
+    # Video Ingest
+    field(:gameplay_ingest_url, :string)
+    field(:gameplay_crop_transform, :map)
+    field(:webcam_ingest_url, :string)
+    field(:webcam_crop_transform, :map)
   end
 
   def changeset(participant, params \\ %{}) do
