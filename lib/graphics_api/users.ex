@@ -21,6 +21,12 @@ defmodule GraphicsAPI.Users do
     |> Repo.update()
   end
 
+  def create_init(params) do
+    %Init{}
+    |> Init.changeset(params)
+    |> Repo.insert()
+  end
+
   ###
   # Users
   ###
