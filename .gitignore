@@ -29,6 +29,7 @@ config/*.exs
 config/*.json
 !config/config.exs
 !config/test.exs
+!config/prod.exs
 !config/*.example.*
 
 nohup.out
