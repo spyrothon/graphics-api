@@ -1,0 +1,29 @@
+name: Spyrothon API
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    env:
+      NODE_ENV: ci
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Erlang/Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 24.0.4
+          elixir-version: 1.12.2
+
+      - name: Install Dependencies
+        run: |
+          mix deps.get
+          mix compile
+
+      - name: Build Mix Release
+        run: |
+          MIX_ENV=prod mix release graphics_api
