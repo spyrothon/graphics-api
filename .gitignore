@@ -30,6 +30,7 @@ config/*.json
 !config/config.exs
 !config/test.exs
 !config/prod.exs
+!config/runtime.exs
 !config/*.example.*
 
 nohup.out

@@ -4,14 +4,11 @@ on:
   push:
     branches: [main]
 
-env:
-  MIX_ENV: prod
-
 jobs:
   build:
     runs-on: ubuntu-20.04
     env:
-      NODE_ENV: ci
+      MIX_ENV: prod
 
     steps:
       - uses: actions/checkout@v2
@@ -23,9 +20,10 @@ jobs:
           elixir-version: 1.12.2
 
       - name: Install Dependencies
-        run: |
-          mix deps.get
-          mix compile
+        run: mix deps.get
+
+      - name: Compile application
+        run: mix compile
 
       - name: Build Mix Release
         run: |
