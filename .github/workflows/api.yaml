@@ -56,7 +56,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: graphics_api
-          path: ./${{ github.sha }}.tar.gz
+          path: ./${{ github.sha }}
 
       - name: Upload and deploy
         uses: appleboy/scp-action@98930d398ce425af0148ea8a0e3295cd04fe2b7a
@@ -64,5 +64,5 @@ jobs:
           host: ${{ secrets.DEPLOYMENT_HOST }}
           username: ${{ secrets.DEPLOYMENT_USERNAME }}
           key: ${{ secrets.DEPLOYMENT_SSH_KEY }}
-          source: ./${{ github.sha }}.tar.gz
-          target: artifacts/graphics_api/
+          source: ./${{ github.sha }}/graphics_api.tar.gz
+          target: artifacts/graphics_api/${{ github.sha }}
