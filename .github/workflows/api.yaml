@@ -62,7 +62,7 @@ jobs:
           name: graphics_api
           path: ./${{ github.sha }}
 
-      - name: Upload and deploy
+      - name: Upload to server
         uses: appleboy/scp-action@98930d398ce425af0148ea8a0e3295cd04fe2b7a
         with:
           host: ${{ secrets.DEPLOYMENT_HOST }}
@@ -70,3 +70,17 @@ jobs:
           key: ${{ secrets.DEPLOYMENT_SSH_KEY }}
           source: ./${{ github.sha }}
           target: artifacts/graphics_api/
+          overwrite: true
+
+      - name: Deploy new release
+        uses: appleboy/ssh-action@f9010ff7f1bbd7db1a0b4bab661437550cea20c0
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME }}
+          key: ${{ secrets.DEPLOYMENT_SSH_KEY }}
+          # This is dependent on the server having it's own copy of `deploy.sh`.
+          # It is intentionally _not_ pushed to the server automatically to
+          # prevent any kind of accidental change.
+          script: ./deploy.sh
