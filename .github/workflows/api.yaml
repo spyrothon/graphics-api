@@ -36,8 +36,12 @@ jobs:
         run: |
           mix release graphics_api --path ./release
 
+      - name: Compress release into tarball
+        run: |
+          tar cvf graphics_api.tar ./release/*
+
       - name: Upload release artifact
         uses: actions/upload-artifact@v3
         with:
           name: graphics_api
-          path: ./release/
+          path: ./graphics_api.tar
