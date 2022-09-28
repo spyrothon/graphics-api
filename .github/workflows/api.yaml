@@ -73,15 +73,14 @@ jobs:
           overwrite: true
 
       - name: Deploy new release
-        uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
+        uses: garygrossgarten/github-action-ssh@release
         env:
           GITHUB_SHA: ${{ github.sha }}
         with:
           host: ${{ secrets.DEPLOYMENT_HOST }}
           username: ${{ secrets.DEPLOYMENT_USERNAME }}
-          key: ${{ secrets.DEPLOYMENT_SSH_KEY }}
-          envs: GITHUB_SHA
+          privateKey: ${{ secrets.DEPLOYMENT_SSH_KEY }}
           # This is dependent on the server having it's own copy of `deploy.sh`.
           # It is intentionally _not_ pushed to the server automatically to
           # prevent any kind of accidental change.
-          script: ./deploy.sh
+          command: ./deploy.sh
