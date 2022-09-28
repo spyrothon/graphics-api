@@ -80,6 +80,7 @@ jobs:
           host: ${{ secrets.DEPLOYMENT_HOST }}
           username: ${{ secrets.DEPLOYMENT_USERNAME }}
           key: ${{ secrets.DEPLOYMENT_SSH_KEY }}
+          envs: GITHUB_SHA
           # This is dependent on the server having it's own copy of `deploy.sh`.
           # It is intentionally _not_ pushed to the server automatically to
           # prevent any kind of accidental change.
