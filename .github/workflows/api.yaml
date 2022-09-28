@@ -47,6 +47,7 @@ jobs:
           path: ./graphics_api.tar.gz
 
   deploy_production:
+    needs: build
     runs-on: ubuntu-20.04
     environment: production
     steps:
@@ -54,7 +55,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: graphics_api
-          path: ./graphics_api.tar
+          path: ./${{ github.sha }}.tar
 
       - name: Upload and deploy
         uses: appleboy/scp-action@98930d398ce425af0148ea8a0e3295cd04fe2b7a
@@ -62,5 +63,5 @@ jobs:
           host: ${{ secrets.DEPLOYMENT_HOST }}
           username: ${{ secrets.DEPLOYMENT_USERNAME }}
           key: ${{ secrets.DEPLOYMENT_SSH_KEY }}
-          source: ./graphics_api.tar.gz
-          target: ~/artifacts/graphics_api/${{ github.sha }}.tar.gz
+          source: ./${{ github.sha }}.tar.gz
+          target: ~/artifacts/graphics_api/
