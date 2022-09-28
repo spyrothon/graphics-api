@@ -73,7 +73,7 @@ jobs:
           overwrite: true
 
       - name: Deploy new release
-        uses: appleboy/ssh-action@f9010ff7f1bbd7db1a0b4bab661437550cea20c0
+        uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
         env:
           GITHUB_SHA: ${{ github.sha }}
         with:
