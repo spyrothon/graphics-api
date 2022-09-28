@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -64,5 +68,5 @@ jobs:
           host: ${{ secrets.DEPLOYMENT_HOST }}
           username: ${{ secrets.DEPLOYMENT_USERNAME }}
           key: ${{ secrets.DEPLOYMENT_SSH_KEY }}
-          source: ./${{ github.sha }}/graphics_api.tar.gz
-          target: artifacts/graphics_api/${{ github.sha }}
+          source: ./${{ github.sha }}
+          target: artifacts/graphics_api/
