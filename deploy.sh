@@ -9,27 +9,30 @@ set -o nounset
 # Config
 ###
 
+# Name of the application being deployed
+APP_NAME=graphics_api
+
 # `GITHUB_SHA` is expected to be set by the script that invokes this script
 # (e.g., Github Actions). It defines the release that this script will unpack
 # and deploy as the current version.
 VERSION=$GITHUB_SHA
 
 # Directory used for symlinking the current release
-CURRENT_DIR=/opt/graphics_api/current
+CURRENT_DIR="/opt/$APP_NAME/current"
 
 # Location where artifacts bundles are prepared
-ARTIFACTS_DIR=~/artifacts/graphics_api
+ARTIFACTS_DIR="~/artifacts/$APP_NAME"
 # Name of the tarball containing the release, relative to the artifact itself
 # e.g., '~/artifacts/graphics_api/<commitsha>/the.tar' -> './the.tar'
-ARTIFACT_NAME=./graphics_api.tar.gz
+ARTIFACT_NAME="./$APP_NAME.tar.gz"
 
 # Path to the binary for invoking the service
-BINARY="./release/bin/graphics_api"
+BINARY="./release/bin/$APP_NAME"
 # File containing environment variable configuration
-ENV_FILE=/opt/graphics_api/prod.env
+ENV_FILE="/opt/$APP_NAME/prod.env"
 # Name of the file to redirect logs to
 # Using a relative path will keep logs per-release
-LOG_FILE=./server-$(date -u +"%Y%m%d%H%M%S").log
+LOG_FILE="./server-$(date -u +"%Y%m%d%H%M%S").log"
 
 
 ###
@@ -38,7 +41,7 @@ LOG_FILE=./server-$(date -u +"%Y%m%d%H%M%S").log
 
 # Extract the specified release
 echo "> Extracting $ARTIFACT_NAME from $VERSION"
-NEW_RELEASE_DIR=$ARTIFACTS_DIR/$VERSION
+NEW_RELEASE_DIR="$ARTIFACTS_DIR/$VERSION"
 cd $NEW_RELEASE_DIR
 tar xf $ARTIFACT_NAME
 
