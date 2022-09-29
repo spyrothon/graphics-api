@@ -3,10 +3,16 @@ name: Spyrothon API
 on:
   push:
     branches: [main]
+    paths:
+      - "spyrothon_api/**"
 
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: ./spyrothon_api
 
 jobs:
   build:
